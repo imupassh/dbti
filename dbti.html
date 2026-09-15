@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>나에게 맞는 디저트는?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FFEAF1;
+    --bg-mint: #E8F6E9;
+    --bg-butter: #FFF3D6;
+    --card: #FFFAFC;
+    --ink: #5B3A34;
+    --ink-soft: rgba(91,58,52,0.62);
+    --pink: #FF8FAE;
+    --pink-deep: #FF6690;
+    --pink-pale: #FFE0EA;
+    --mint: #A9D9B4;
+    --butter: #FFCF6B;
+    --outline: #F2AFC7;
+    --sticker-shadow: 6px 6px 0 rgba(255,143,174,0.28);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100%;
+  }
+
+  body{
+    background-image:
+      radial-gradient(circle at 12% 15%, var(--bg-mint) 0, transparent 38%),
+      radial-gradient(circle at 88% 20%, var(--bg-butter) 0, transparent 32%),
+      radial-gradient(circle at 50% 95%, rgba(255,143,174,0.16) 0, transparent 40%);
+    display:flex;
+    justify-content:center;
+    padding: 32px 16px 64px;
+  }
+
+  .stage{
+    width:100%;
+    max-width: 440px;
+  }
+
+  .card{
+    background: var(--card);
+    border-radius: 26px;
+    border: 3px solid var(--outline);
+    box-shadow: var(--sticker-shadow);
+    padding: 34px 26px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .deco-heart{
+    position:absolute;
+    font-size: 20px;
+    opacity: .8;
+    pointer-events:none;
+    filter: drop-shadow(0 1px 0 rgba(255,255,255,0.6));
+  }
+  .deco-heart.h1{ top:14px; right:18px; transform: rotate(8deg); }
+  .deco-heart.h2{ bottom:16px; left:16px; font-size:15px; transform: rotate(-10deg); opacity:.6; }
+
+  /* ---------- progress (heart dots) ---------- */
+  .progress-row{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index:1;
+  }
+  .progress-heart{
+    font-size: 16px;
+    filter: grayscale(1) opacity(0.35);
+    transition: filter .25s ease, transform .25s ease;
+  }
+  .progress-heart.active{
+    filter: none;
+    transform: scale(1.15);
+  }
+
+  /* ---------- intro ---------- */
+  .intro-photo{
+    width: 100%;
+    max-width: 240px;
+    display:block;
+    margin: 0 auto 14px;
+    border-radius: 20px;
+    border: 3px solid var(--outline);
+  }
+
+  .dessert-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+  .grid-item{
+    aspect-ratio: 1;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--outline);
+    background: var(--pink-pale);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .grid-item img{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  .grid-placeholder{
+    font-size: 26px;
+  }
+
+  p.intro-hook{
+    font-family:'Jua', sans-serif;
+    font-size: 16px;
+    text-align:center;
+    color: var(--pink-deep);
+    margin: 0 0 12px;
+  }
+
+  h1.title{
+    font-family:'Jua', sans-serif;
+    font-size: 26px;
+    line-height:1.45;
+    text-align:center;
+    margin: 0 0 10px;
+    color: var(--pink-deep);
+  }
+  p.lede{
+    font-size: 14.5px;
+    line-height:1.7;
+    text-align:center;
+    color: var(--ink-soft);
+    margin: 0 0 26px;
+  }
+
+  .btn-primary{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    padding: 15px 20px;
+    background: var(--pink);
+    color: #FFF9F0;
+    border: 3px solid var(--outline);
+    border-radius: 18px;
+    box-shadow: 4px 4px 0 rgba(242,175,199,0.9);
+    font-family:'Jua', sans-serif;
+    font-size: 16px;
+    cursor:pointer;
+    transition: transform .12s ease, background .2s ease, box-shadow .12s ease;
+  }
+  .btn-primary:hover{ background: var(--pink-deep); }
+  .btn-primary:active{ transform: translate(3px,3px); box-shadow: 1px 1px 0 rgba(242,175,199,0.9); }
+  .btn-primary:focus-visible{ outline: 3px solid var(--butter); outline-offset: 2px; }
+
+  .btn-primary{
+    text-decoration:none;
+  }
+  .btn-instagram{
+    margin-top:10px;
+    background:#FFF1F6;
+    color:var(--pink-deep);
+    box-shadow:4px 4px 0 rgba(242,175,199,0.65);
+  }
+  .btn-instagram:hover{ background:#FFDDE8; }
+  .btn-instagram:active{
+    transform:translate(3px,3px);
+    box-shadow:1px 1px 0 rgba(242,175,199,0.65);
+  }
+
+  /* ---------- question ---------- */
+  .q-label{
+    font-family:'Jua', sans-serif;
+    font-size: 13px;
+    color: var(--pink-deep);
+    text-align:center;
+    margin: 0 0 6px;
+  }
+  h2.q-title{
+    font-family:'Jua', sans-serif;
+    font-size: 20px;
+    line-height:1.5;
+    text-align:center;
+    margin: 0 0 22px;
+    color: var(--ink);
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+
+  .option-btn{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    width:100%;
+    text-align:left;
+    padding: 13px 16px;
+    background: var(--pink-pale);
+    border: 2.5px solid transparent;
+    border-radius: 16px;
+    font-family:'Noto Sans KR', sans-serif;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor:pointer;
+    transition: background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .option-btn .emoji{ font-size: 21px; flex-shrink:0; }
+  .option-btn:hover{ background: #FFD3E2; transform: translateY(-1px); }
+  .option-btn:active{ transform: translateY(0); }
+  .option-btn.selected{
+    background: var(--pink);
+    color: #fff;
+    border-color: var(--outline);
+  }
+  .option-btn:focus-visible{ outline: 3px solid var(--butter); outline-offset: 2px; }
+
+  /* pair (Q6) */
+  .pair-block{ margin-bottom: 18px; }
+  .pair-block:last-child{ margin-bottom: 4px; }
+  .pair-label{
+    font-family:'Jua', sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align:center;
+    margin: 0 0 8px;
+  }
+  .pair-row{
+    display:flex;
+    gap: 10px;
+  }
+  .pair-btn{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 6px;
+    padding: 14px 8px;
+    background: var(--pink-pale);
+    border: 2.5px solid transparent;
+    border-radius: 16px;
+    font-family:'Noto Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink);
+    cursor:pointer;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .pair-btn .emoji{ font-size: 24px; }
+  .pair-btn:hover{ background: #FFD3E2; }
+  .pair-btn.selected{
+    background: var(--pink);
+    color: #fff;
+    border-color: var(--outline);
+  }
+  .pair-btn:focus-visible{ outline: 3px solid var(--butter); outline-offset: 2px; }
+
+  .vs{
+    align-self:center;
+    font-family:'Jua', sans-serif;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- result ---------- */
+  .result-badge{
+    font-size: 46px;
+    text-align:center;
+    margin-bottom: 4px;
+  }
+  h2.result-type{
+    font-family:'Jua', sans-serif;
+    font-size: 26px;
+    text-align:center;
+    margin: 0 0 10px;
+    color: var(--pink-deep);
+  }
+  p.result-personality{
+    font-size: 15px;
+    line-height:1.6;
+    text-align:center;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .result-keywords{
+    text-align:center;
+    font-family:'Jua', sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+
+  .star-stats{
+    display:flex;
+    flex-direction:column;
+    gap: 7px;
+    background: var(--pink-pale);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin: 0 0 22px;
+  }
+  .star-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+  }
+  .star-row .star-label{
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    flex-shrink: 0;
+    width: 62px;
+  }
+  .star-row .stars{
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
+  .star-row .stars .filled{ color: var(--pink); }
+  .star-row .stars .empty{ color: var(--outline); }
+
+  p.result-match-label{
+    text-align:center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 4px;
+  }
+  h3.result-dessert-name{
+    font-family:'Jua', sans-serif;
+    font-size: 22px;
+    text-align:center;
+    margin: 0 0 14px;
+    color: var(--ink);
+  }
+  .result-photo-frame{
+    position: relative;
+    background: var(--pink-pale);
+    border: 3px solid var(--outline);
+    border-radius: 20px;
+    padding: 14px;
+    text-align:center;
+    margin-bottom: 18px;
+    min-height: 140px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .result-photo-frame img{
+    width:100%;
+    max-width: 220px;
+    border-radius: 14px;
+    display:block;
+    margin: 0 auto;
+  }
+  .photo-placeholder{
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height:1.6;
+  }
+  .photo-placeholder .ph-emoji{ font-size:36px; display:block; margin-bottom:6px; }
+  p.result-desc{
+    font-size: 14.5px;
+    line-height:1.75;
+    text-align:center;
+    color: var(--ink);
+    margin: 0 0 24px;
+  }
+
+  .hidden{ display:none !important; }
+
+
+  html{
+    -webkit-text-size-adjust:100%;
+    overflow-x:hidden;
+  }
+  body{
+    overflow-x:hidden;
+  }
+  button,a{
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  @media (max-width:480px){
+    body{ padding:12px 10px 28px; }
+    .card{
+      border-radius:22px;
+      padding:26px 18px 22px;
+    }
+    h1.title{ font-size:25px; }
+    h2.q-title{ font-size:19px; margin-bottom:18px; }
+    .option-btn{
+      min-height:52px;
+      padding:13px 14px;
+      font-size:14px;
+    }
+    .pair-btn{
+      min-height:82px;
+      padding:12px 6px;
+      font-size:13px;
+    }
+    .pair-btn .emoji{ font-size:22px; }
+    h2.result-type{ font-size:24px; }
+    .result-photo-frame{ padding:10px; }
+    .result-photo-frame img{
+      max-width:100%;
+      height:auto;
+    }
+    .btn-primary{
+      min-height:52px;
+      font-size:15.5px;
+    }
+  }
+
+  @media (max-width:360px){
+    body{ padding:8px 7px 22px; }
+    .card{ padding:22px 14px 20px; }
+    .dessert-grid{ gap:6px; }
+    .option-btn{ gap:9px; padding:12px 11px; }
+    .option-btn .emoji{ font-size:19px; }
+    .pair-row{ gap:7px; }
+    .pair-btn{ font-size:12.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- INTRO -->
+  <div class="card" id="screen-intro">
+    <span class="deco-heart h1">💗</span>
+    <span class="deco-heart h2">🩷</span>
+    <div class="dessert-grid">
+      <div class="grid-item"><img src="images/크루아상.png" alt="크루아상" data-emoji="🥐" onerror="handleGridImgError(this)"></div>
+      <div class="grid-item"><img src="images/스콘.png" alt="스콘" data-emoji="☕" onerror="handleGridImgError(this)"></div>
+      <div class="grid-item"><img src="images/롤케이크.png" alt="롤케이크" data-emoji="☁️" onerror="handleGridImgError(this)"></div>
+      <div class="grid-item"><img src="images/레몬케이크.png" alt="레몬케이크" data-emoji="🍓" onerror="handleGridImgError(this)"></div>
+      <div class="grid-item"><img src="images/초콜릿무스.png" alt="초콜릿무스" data-emoji="🍫" onerror="handleGridImgError(this)"></div>
+      <div class="grid-item"><img src="images/마카롱.png" alt="마카롱" data-emoji="🍡" onerror="handleGridImgError(this)"></div>
+    </div>
+    <p class="intro-hook">나와 찰떡궁합인 디저트를 만나보세요! 🍰</p>
+    <h1 class="title">나에게 맞는<br>디저트는?</h1>
+    <p class="lede"><베이킹 연합동아리🍓파네티에르🍓></p>
+    <button class="btn-primary" id="btn-start">테스트 시작하기 🍡</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="card hidden" id="screen-question">
+    <div class="progress-row" id="progress-row"></div>
+    <p class="q-label" id="q-label"></p>
+    <h2 class="q-title" id="q-title"></h2>
+    <div class="options" id="q-options"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="card hidden" id="screen-result">
+    <span class="deco-heart h1">💗</span>
+    <div class="result-badge" id="result-emoji"></div>
+    <h2 class="result-type" id="result-type"></h2>
+    <p class="result-personality" id="result-personality"></p>
+    <p class="result-keywords" id="result-keywords"></p>
+    <div class="star-stats" id="star-stats"></div>
+    <p class="result-match-label">당신과 어울리는 디저트는?</p>
+    <h3 class="result-dessert-name" id="result-dessert-name"></h3>
+    <div class="result-photo-frame" id="result-photo-frame">
+      <img id="result-photo-img" src="" alt="" />
+    </div>
+    <p class="result-desc" id="result-desc"></p>
+    <a
+        class="btn-primary btn-instagram"
+        href="https://www.instagram.com/pane_baking_club/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="파네티에르 인스타그램 구경하기"
+      >
+        📷 파네티에르 인스타그램 구경하기
+      </a>
+
+      <button class="btn-primary" id="btn-restart">다시 테스트하기</button>
+  </div>
+
+</div>
+
+<script>
+function handleGridImgError(img){
+  const emoji = img.getAttribute('data-emoji') || '🍰';
+  const parent = img.parentElement;
+  parent.innerHTML = '<div class="grid-placeholder">'+emoji+'</div>';
+}
+
+(function(){
+
+  // ---------- 결과 유형 데이터 ----------
+  // photo 경로는 index.html 옆의 images 폴더를 기준으로 합니다.
+  const TYPES = {
+    crispy:     { name:'바삭고소파',     emoji:'🥐',
+                  personality:'바삭한 식감과 고소한 풍미를 좋아하는 타입 당신!',
+                  keywords:'바삭함 · 고소함 · 담백함',
+                  stats:{ 바삭함:5, 고소함:4, 달콤함:2, 촉촉함:1, 진한맛:2 },
+                  dessert:'크루아상', photo:'images/크루아상.png',
+                  desc:'겉은 바삭, 맛은 고소. 이 조합이면 충분해!' },
+    plain:      { name:'담백고소파',     emoji:'☕',
+                  personality:'담백한 맛과 고소한 풍미를 좋아하는 타입 당신!',
+                  keywords:'고소함 · 담백함',
+                  stats:{ 바삭함:3, 고소함:5, 달콤함:1, 촉촉함:2, 진한맛:1 },
+                  dessert:'스콘', photo:'images/스콘.png',
+                  desc:'투박해도 고소함은 진심. 과하지 않아서 계속 찾게 되는 맛.' },
+    fluffy:     { name:'폭신부드러운파', emoji:'☁️',
+                  personality:'폭신한 식감과 부드러운 단맛을 좋아하는 타입 당신!',
+                  keywords:'폭신함 · 부드러운 단맛',
+                  stats:{ 바삭함:1, 고소함:2, 달콤함:4, 촉촉함:4, 진한맛:2 },
+                  dessert:'롤케이크', photo:'images/롤케이크.png',
+                  desc:'폭신하게 부풀어 올라 부드럽게 녹아드는, 편안한 단맛.' },
+    fresh:      { name:'상큼촉촉파',     emoji:'🍓',
+                  personality:'촉촉한 식감과 상큼한 맛을 좋아하는 타입 당신!',
+                  keywords:'촉촉함 · 상큼함',
+                  stats:{ 바삭함:1, 고소함:1, 달콤함:3, 촉촉함:5, 진한맛:2 },
+                  dessert:'레몬케이크', photo:'images/레몬케이크.png',
+                  desc:'촉촉한 속살에 산뜻한 끝맛. 깔끔하게 기억되는 디저트.' },
+    fudgy:      { name:'진득꾸덕파',     emoji:'🍫',
+                  personality:'꾸덕한 식감과 진한 맛을 좋아하는 타입 당신!',
+                  keywords:'꾸덕함 · 진한맛',
+                  stats:{ 바삭함:1, 고소함:2, 달콤함:4, 촉촉함:3, 진한맛:5 },
+                  dessert:'초콜릿무스', photo:'images/초콜릿무스.png',
+                  desc:'묵직하고 진한 한 스푼. 진심으로 진한 맛을 좋아하는 당신.' },
+    chewySweet: { name:'달콤쫀득파',     emoji:'🍡',
+                  personality:'쫀득한 식감과 달콤한 맛을 좋아하는 타입 당신!',
+                  keywords:'쫀득함 · 달콤함',
+                  stats:{ 바삭함:1, 고소함:1, 달콤함:5, 촉촉함:3, 진한맛:3 },
+                  dessert:'마카롱', photo:'images/마카롱.png',
+                  desc:'한입 베어물면 쫀득, 씹을수록 달콤. 자꾸 손이 가는 맛.' },
+  };
+
+  // ---------- 문항 데이터 ----------
+  const QUESTIONS = [
+    {
+      label: 'Q1',
+      title: '가장 좋아하는 디저트 식감은?',
+      options: [
+        { emoji:'🥐', text:'바삭바삭!', scores:{ crispy:3, plain:1 } },
+        { emoji:'☁️', text:'폭신폭신!', scores:{ fluffy:3 } },
+        { emoji:'🍮', text:'촉촉하고 부드럽게!', scores:{ fresh:3 } },
+        { emoji:'🍫', text:'꾸덕꾸덕!', scores:{ fudgy:3 } },
+        { emoji:'🍡', text:'쫀득쫀득!', scores:{ chewySweet:3 } },
+      ]
+    },
+    {
+      label: 'Q2',
+      title: '디저트의 단맛은 어느 정도가 좋아?',
+      options: [
+        { emoji:'🍬', text:'아주 달게!', scores:{ chewySweet:2 } },
+        { emoji:'🍰', text:'달달하게!', scores:{ fluffy:1, fudgy:1 } },
+        { emoji:'☕', text:'적당하게!', scores:{ fresh:2 } },
+        { emoji:'🧈', text:'담백하게!', scores:{ crispy:1, plain:2 } },
+      ]
+    },
+    {
+      label: 'Q3',
+      title: '가장 끌리는 맛은?',
+      options: [
+        { emoji:'🍫', text:'진하고 깊은 맛', scores:{ fudgy:3 } },
+        { emoji:'🧈', text:'고소하고 버터리한 맛', scores:{ crispy:1, plain:2 } },
+        { emoji:'🍓', text:'상큼하고 산뜻한 맛', scores:{ fresh:3 } },
+        { emoji:'🍬', text:'달콤하고 부드러운 맛', scores:{ chewySweet:1, fluffy:2 } },
+      ]
+    },
+    {
+      label: 'Q4',
+      title: '디저트를 고를 때 가장 먼저 보는 것은?',
+      options: [
+        { emoji:'🥐', text:'식감', scores:{ crispy:1, chewySweet:1 } },
+        { emoji:'🍡', text:'맛', scores:{ fudgy:1, fresh:1 } },
+        { emoji:'☁️', text:'재료', scores:{ fluffy:1, plain:1 } },
+      ]
+    },
+    {
+      label: 'Q5',
+      title: '디저트를 먹고 난 뒤, 어떤 느낌이 가장 좋아?',
+      options: [
+        { emoji:'🍬', text:'"와, 진짜 달다!"', scores:{ chewySweet:3 } },
+        { emoji:'🧈', text:'"버터 향이 진짜 좋다."', scores:{ crispy:1, plain:2 } },
+        { emoji:'🍋', text:'"끝맛이 상큼해서 깔끔하다."', scores:{ fresh:3 } },
+        { emoji:'🍫', text:'"한입만 먹어도 맛이 진하다."', scores:{ fudgy:3 } },
+        { emoji:'🍡', text:'"쫀득해서 자꾸 씹게 된다."', scores:{ chewySweet:2, fluffy:1 } },
+      ]
+    },
+    {
+      label: 'Q6',
+      title: '둘 중 더 먹고 싶은 것은?',
+      pairs: [
+        { name:'①', options:[
+            { emoji:'🍪', text:'쿠키', scores:{ crispy:1, plain:1 } },
+            { emoji:'🍰', text:'케이크', scores:{ fluffy:1, fresh:1 } },
+          ] },
+        { name:'②', options:[
+            { emoji:'🍫', text:'초콜릿', scores:{ fudgy:2 } },
+            { emoji:'🍓', text:'과일', scores:{ fresh:2 } },
+          ] },
+        { name:'③', options:[
+            { emoji:'🍡', text:'마카롱', scores:{ chewySweet:2 } },
+            { emoji:'☕', text:'스콘', scores:{ plain:2, crispy:1 } },
+          ] },
+      ]
+    },
+  ];
+
+  const TOTAL_STEPS = QUESTIONS.length;
+  let currentStep = 0;
+  let scores = {};
+  let pairSelections = [null, null, null];
+
+  const screenIntro = document.getElementById('screen-intro');
+  const screenQuestion = document.getElementById('screen-question');
+  const screenResult = document.getElementById('screen-result');
+  const progressRow = document.getElementById('progress-row');
+  const qLabel = document.getElementById('q-label');
+  const qTitle = document.getElementById('q-title');
+  const qOptions = document.getElementById('q-options');
+
+  function resetState(){
+    currentStep = 0;
+    scores = { crispy:0, plain:0, fluffy:0, fresh:0, fudgy:0, chewySweet:0 };
+    pairSelections = [null, null, null];
+  }
+
+  function buildProgress(){
+    progressRow.innerHTML = '';
+    for(let i=0; i<TOTAL_STEPS; i++){
+      const span = document.createElement('span');
+      span.className = 'progress-heart';
+      span.textContent = '💗';
+      progressRow.appendChild(span);
+    }
+  }
+
+  function updateProgress(){
+    const hearts = progressRow.querySelectorAll('.progress-heart');
+    hearts.forEach((heart, idx) => {
+      heart.classList.toggle('active', idx <= currentStep);
+    });
+  }
+
+  function addScores(scoreObj){
+    Object.keys(scoreObj).forEach(key => {
+      scores[key] = (scores[key] || 0) + scoreObj[key];
+    });
+  }
+
+  function renderQuestion(){
+    const q = QUESTIONS[currentStep];
+    qLabel.textContent = q.label;
+    qTitle.textContent = q.title;
+    qOptions.innerHTML = '';
+
+    if(q.pairs){
+      renderPairQuestion(q);
+    } else {
+      q.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = '<span class="emoji">'+opt.emoji+'</span><span>'+opt.text+'</span>';
+        btn.addEventListener('click', () => {
+          addScores(opt.scores);
+          goNext();
+        });
+        qOptions.appendChild(btn);
+      });
+    }
+
+    updateProgress();
+  }
+
+  function renderPairQuestion(q){
+    q.pairs.forEach((pair, pairIdx) => {
+      const block = document.createElement('div');
+      block.className = 'pair-block';
+
+      const label = document.createElement('p');
+      label.className = 'pair-label';
+      label.textContent = pair.name;
+      block.appendChild(label);
+
+      const row = document.createElement('div');
+      row.className = 'pair-row';
+
+      pair.options.forEach((opt, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'pair-btn';
+        btn.innerHTML = '<span class="emoji">'+opt.emoji+'</span><span>'+opt.text+'</span>';
+        btn.addEventListener('click', () => {
+          pairSelections[pairIdx] = { pairIdx, optIdx, scores: opt.scores };
+          row.querySelectorAll('.pair-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          maybeFinishPairQuestion();
+        });
+        row.appendChild(btn);
+      });
+
+      block.appendChild(row);
+      qOptions.appendChild(block);
+    });
+  }
+
+  function maybeFinishPairQuestion(){
+    if(pairSelections.every(sel => sel !== null)){
+      pairSelections.forEach(sel => addScores(sel.scores));
+      setTimeout(goNext, 250);
+    }
+  }
+
+  function goNext(){
+    currentStep++;
+    if(currentStep >= TOTAL_STEPS){
+      showResult();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function pickResultType(){
+    let best = null;
+    let bestScore = -Infinity;
+    Object.keys(scores).forEach(key => {
+      if(scores[key] > bestScore){
+        bestScore = scores[key];
+        best = key;
+      }
+    });
+    return best;
+  }
+
+  function showResult(){
+    screenQuestion.classList.add('hidden');
+    screenResult.classList.remove('hidden');
+
+    const key = pickResultType();
+    const type = TYPES[key];
+
+    document.getElementById('result-emoji').textContent = type.emoji;
+    document.getElementById('result-type').textContent = type.name;
+    document.getElementById('result-personality').textContent = type.personality;
+    document.getElementById('result-keywords').textContent = type.keywords;
+    document.getElementById('result-dessert-name').textContent = type.dessert;
+    document.getElementById('result-desc').textContent = type.desc;
+
+    const starStats = document.getElementById('star-stats');
+    starStats.innerHTML = Object.keys(type.stats).map(label => {
+      const rating = type.stats[label];
+      const filled = '★'.repeat(rating);
+      const empty = '☆'.repeat(5 - rating);
+      return '<div class="star-row">' +
+               '<span class="star-label">'+label+'</span>' +
+               '<span class="stars"><span class="filled">'+filled+'</span><span class="empty">'+empty+'</span></span>' +
+             '</div>';
+    }).join('');
+
+    const frame = document.getElementById('result-photo-frame');
+    const img = document.getElementById('result-photo-img');
+    img.onerror = function(){
+      frame.innerHTML =
+        '<div class="photo-placeholder">' +
+          '<span class="ph-emoji">'+type.emoji+'</span>' +
+          type.photo + ' 를 images 폴더에 추가해주세요' +
+        '</div>';
+    };
+    img.src = type.photo;
+    img.alt = type.dessert;
+  }
+
+  document.getElementById('btn-start').addEventListener('click', () => {
+    resetState();
+    buildProgress();
+    screenIntro.classList.add('hidden');
+    screenQuestion.classList.remove('hidden');
+    renderQuestion();
+  });
+
+  document.getElementById('btn-restart').addEventListener('click', () => {
+    screenResult.classList.add('hidden');
+    screenIntro.classList.remove('hidden');
+    // 결과 화면 이미지 프레임을 원래 상태로 복구
+    document.getElementById('result-photo-frame').innerHTML =
+      '<img id="result-photo-img" src="" alt="" />';
+  });
+
+})();
+</script>
+</body>
+</html>
